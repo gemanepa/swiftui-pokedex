@@ -124,38 +124,77 @@ class PokemonViewModel: ObservableObject {
 }
 
 // MARK: - Views
+struct SearchBar: View {
+    @Binding var searchText: String
+
+    var body: some View {
+        HStack {
+            TextField("Search Pokémon", text: $searchText)
+                .padding(8)
+                .background(Color(.systemGray6))
+                .cornerRadius(10)
+                .padding(.horizontal, 15)
+                .onTapGesture {
+                    // Hide keyboard when tapped outside the text field
+                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                }
+
+            Button(action: {
+                // Clear the search text
+                searchText = ""
+            }) {
+                Image(systemName: "xmark.circle.fill")
+                    .foregroundColor(.gray)
+            }
+            .padding(.trailing, 8)
+            .opacity(searchText.isEmpty ? 0 : 1)
+        }
+    }
+}
 
 struct PokemonListView: View {
     @ObservedObject var viewModel: PokemonViewModel
     @State private var visiblePokemon: [Pokemon] = []
+    @State private var searchText: String = ""
 
     var body: some View {
         NavigationView {
-            List(viewModel.pokemonList) { pokemon in
-                NavigationLink(destination: PokemonInfoView(viewModel: viewModel, pokemon: pokemon)) {
-                    HStack {
-                        AsyncImageLoader(pokemon: pokemon, isVisible: visiblePokemon.contains(pokemon))
-                            .frame(width: 75, height: 75)
-                            .padding()
-                            .onAppear {
-                                visiblePokemon.append(pokemon)
-                            }
-                            .onDisappear {
-                                                            if let index = visiblePokemon.firstIndex(of: pokemon) {
-                                                                visiblePokemon.remove(at: index)
-                                                            }
-                                                        }
-                        Text(pokemon.name.capitalized)
-                        
-                        
+            VStack {
+                SearchBar(searchText: $searchText)
+
+                List(filteredPokemon) { pokemon in
+                    NavigationLink(destination: PokemonInfoView(viewModel: viewModel, pokemon: pokemon)) {
+                        HStack {
+                            AsyncImageLoader(pokemon: pokemon, isVisible: visiblePokemon.contains(pokemon))
+                                .frame(width: 75, height: 75)
+                                .padding()
+                                .onAppear {
+                                    visiblePokemon.append(pokemon)
+                                }
+                                .onDisappear {
+                                    if let index = visiblePokemon.firstIndex(of: pokemon) {
+                                        visiblePokemon.remove(at: index)
+                                    }
+                                }
+                            Text(pokemon.name.capitalized)
+                        }
                     }
                 }
+                .onAppear {
+                    print("Fetching Pokemons...")
+                    viewModel.fetchPokemons()
+                }
+                .navigationTitle("Pokemons")
             }
-            .onAppear {
-                print("Fetching Pokemons...")
-                viewModel.fetchPokemons()
-            }
-            .navigationTitle("Pokemons")
+        }
+    }
+
+    // Add a computed property to filter the Pokémon based on the search text
+    private var filteredPokemon: [Pokemon] {
+        if searchText.isEmpty {
+            return viewModel.pokemonList
+        } else {
+            return viewModel.pokemonList.filter { $0.name.lowercased().contains(searchText.lowercased()) }
         }
     }
 
