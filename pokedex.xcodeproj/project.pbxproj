@@ -44,6 +44,7 @@
 		AD7A552D2B4B85F2004D7240 /* pokedexUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = pokedexUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AD7A55312B4B85F2004D7240 /* pokedexUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pokedexUITests.swift; sourceTree = "<group>"; };
 		AD7A55332B4B85F2004D7240 /* pokedexUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pokedexUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		ADB33DC62B4BC13400854C99 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +75,7 @@
 		AD7A550A2B4B85EF004D7240 = {
 			isa = PBXGroup;
 			children = (
+				ADB33DC62B4BC13400854C99 /* README.md */,
 				AD7A55152B4B85EF004D7240 /* pokedex */,
 				AD7A55262B4B85F2004D7240 /* pokedexTests */,
 				AD7A55302B4B85F2004D7240 /* pokedexUITests */,

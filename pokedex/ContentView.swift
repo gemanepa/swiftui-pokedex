@@ -75,7 +75,7 @@ class PokemonViewModel: ObservableObject {
             return
         }
 
-        guard let url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=1300") else {
+        guard let url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=1275") else {
             print("Invalid URL")
             return
         }
@@ -127,28 +127,74 @@ class PokemonViewModel: ObservableObject {
 
 struct PokemonListView: View {
     @ObservedObject var viewModel: PokemonViewModel
-    
+    @State private var visiblePokemon: [Pokemon] = []
+
     var body: some View {
         NavigationView {
             List(viewModel.pokemonList) { pokemon in
                 NavigationLink(destination: PokemonInfoView(viewModel: viewModel, pokemon: pokemon)) {
                     HStack {
+                        AsyncImageLoader(pokemon: pokemon, isVisible: visiblePokemon.contains(pokemon))
+                            .frame(width: 75, height: 75)
+                            .padding()
+                            .onAppear {
+                                visiblePokemon.append(pokemon)
+                            }
+                            .onDisappear {
+                                                            if let index = visiblePokemon.firstIndex(of: pokemon) {
+                                                                visiblePokemon.remove(at: index)
+                                                            }
+                                                        }
                         Text(pokemon.name.capitalized)
-                        Spacer()
+                        
+                        
                     }
                 }
             }
             .onAppear {
-                            print("Fetching Pokemons...")
-                            viewModel.fetchPokemons()
-                        }
-                        .onChange(of: viewModel.pokemonList) {
-                            print("Pokemon List Updated:", viewModel.pokemonList)
-                        }
+                print("Fetching Pokemons...")
+                viewModel.fetchPokemons()
+            }
             .navigationTitle("Pokemons")
         }
     }
+
+    struct AsyncImageLoader: View {
+        let pokemon: Pokemon
+        let isVisible: Bool
+
+        var body: some View {
+            if isVisible {
+                AsyncImage(url: URL(string: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/\(pokemon.id).png")) { phase in
+                    switch phase {
+                    case .empty:
+                        // Placeholder or loading view
+                        ProgressView()
+                    case .success(let image):
+                        // Successfully loaded image
+                        image
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 75, height: 75)
+                    case .failure:
+                        // Display an error or placeholder image
+                        Image(systemName: "xmark.octagon")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 75, height: 75)
+                    @unknown default:
+                        // Handle unknown cases
+                        EmptyView()
+                    }
+                }
+            } else {
+                // Placeholder view for non-visible items
+                Color.clear.frame(width: 75, height: 75)
+            }
+        }
+    }
 }
+
 
 struct PokemonInfoView: View {
     @ObservedObject var viewModel: PokemonViewModel
