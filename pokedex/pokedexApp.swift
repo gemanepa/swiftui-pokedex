@@ -8,10 +8,11 @@
 import SwiftUI
 
 @main
-struct pokedexApp: App {
+struct PokedexApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            PokemonListView(viewModel: PokemonViewModel()) // Assuming PokemonListView is your main view
         }
     }
 }
+
