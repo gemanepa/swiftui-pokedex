@@ -25,7 +25,7 @@ Pokedex is a simple SwiftUI iOS app that allows users to explore a list of Poké
 ### 4. Lazy Loading and Asynchronous Image Loading
 
 -   Utilizes lazy loading to optimize performance by only loading data for the visible items.
--   Implements asynchronous image loading using SwiftUI's `AsyncImage` for displaying Pokémon images.
+-   Implements asynchronous image loading using SwiftUI's `AsyncImage` for displaying Pokémon images taking advantage of the `onAppear` and `onDisappear` modifiers in the `PokemonListView` to dynamically load and cancel the loading of images based on their visibility in the list.
 
 ## Installation
 
